@@ -1,8 +1,8 @@
 #include <QCoreApplication>
 #include "dcmtk/config/osconfig.h"
 #include "dcmtk/dcmdata/dctk.h"
-//#include <QTextStream>
-//#include <stdio.h>
+#include <QTextStream>
+#include <stdio.h>
 #include <QDebug>
 
 
@@ -13,16 +13,22 @@ QDebug operator<<(QDebug dbg, const OFString &ofString)
     return dbg.space();
 }
 
+//overload operator<<, otherwise Qt would not recognize OFString.
+QTextStream& operator<<(QTextStream &outstream, OFString &ofString)
+{
+    outstream << ofString.c_str();
+    return outstream;
+}
+
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
-
-    qDebug() << "************************Begin************************";
+    QCoreApplication a(argc, argv);  
 
 //    QTextStream cin(stdin, QIODevice::ReadOnly);
-//    QTextStream cout(stdout, QIODevice::WriteOnly);
-//    QTextStream cerr(stderr, QIODevice::WriteOnly);
+    QTextStream cout(stdout, QIODevice::WriteOnly);
+    QTextStream cerr(stderr, QIODevice::WriteOnly);
 
+    cout << "************************Begin************************" << endl;
 
     DcmFileFormat fileformat;
     OFCondition status = fileformat.loadFile("test.dcm");
@@ -31,111 +37,112 @@ int main(int argc, char *argv[])
         OFString patientsName;
         if (fileformat.getDataset()->findAndGetOFString(DCM_PatientName, patientsName).good())
         {
-            qDebug() << "Patient's Name: " << patientsName;
+//            qDebug() << "Patient's Name: " << patientsName;
+            cout << "Patient's Name: " << patientsName << endl;//endl is essential, otherwise this line would be overlapped. But it is not essential when qDebug().
         }
         else
-            qDebug() << "Error: cannot access Patient's Name!";
+            cerr << "Error: cannot access Patient's Name!" << endl;
 
         OFString studyID;
         if (fileformat.getDataset()->findAndGetOFString(DCM_StudyID, studyID).good())
         {
-            qDebug() << "studyID: " << studyID;
+            cout << "studyID: " << studyID << endl;
         }
         else
-            qDebug() << "Error: cannot access studyID!";
+            cerr << "Error: cannot access studyID!" << endl;
 
         OFString seriesNumber;
         if (fileformat.getDataset()->findAndGetOFString(DCM_SeriesNumber, seriesNumber).good())
         {
-            qDebug() << "seriesNumber: " << seriesNumber;
+            cout << "seriesNumber: " << seriesNumber << endl;
         }
         else
-            qDebug() << "Error: cannot access seriesNumber!";
+            cerr << "Error: cannot access seriesNumber!" << endl;
 
         OFString acquisitionNumber;
         if (fileformat.getDataset()->findAndGetOFString(DCM_AcquisitionNumber, acquisitionNumber).good())
         {
-            qDebug() << "acquisitionNumber: " << acquisitionNumber;
+            cout << "acquisitionNumber: " << acquisitionNumber << endl;
         }
         else
-            qDebug() << "Error: cannot access acquisitionNumber!";
+            cerr << "Error: cannot access acquisitionNumber!" << endl;
 
         OFString instanceNumber;//Image No.
         if (fileformat.getDataset()->findAndGetOFString(DCM_InstanceNumber, instanceNumber).good())
         {
-            qDebug() << "instanceNumber: " << instanceNumber;
+            cout << "instanceNumber: " << instanceNumber << endl;
         }
         else
-            qDebug() << "Error: cannot access instanceNumber!";
+            cerr << "Error: cannot access instanceNumber!" << endl;
 
         OFString windowCenter;
         if (fileformat.getDataset()->findAndGetOFString(DCM_WindowCenter, windowCenter).good())
         {
-            qDebug() << "WL: " << windowCenter;
+            cout << "WL: " << windowCenter << endl;
         }
         else
-            qDebug() << "Error: cannot access windowCenter!";
+            cerr << "Error: cannot access windowCenter!" << endl;
 
         OFString windowWidth;
         if (fileformat.getDataset()->findAndGetOFString(DCM_WindowWidth, windowWidth).good())
         {
-            qDebug() << "WW: " << windowWidth;
+            cout << "WW: " << windowWidth << endl;
         }
         else
-            qDebug() << "Error: cannot access windowWidth!";
+            cerr << "Error: cannot access windowWidth!" << endl;
 
         OFString rows;
         if (fileformat.getDataset()->findAndGetOFString(DCM_Rows, rows).good())
         {
-            qDebug() << "rows: " << rows;
+            cout << "rows: " << rows << endl;
         }
         else
-            qDebug() << "Error: cannot access rows!";
+            cerr << "Error: cannot access rows!" << endl;
 
         OFString columns;
         if (fileformat.getDataset()->findAndGetOFString(DCM_Columns, columns).good())
         {
-            qDebug() << "columns: " << columns;
+            cout << "columns: " << columns << endl;
         }
         else
-            qDebug() << "Error: cannot access columns!";
+            cerr << "Error: cannot access columns!" << endl;
 
         OFString numberOfFrames;
         if (fileformat.getDataset()->findAndGetOFString(DCM_NumberOfFrames, numberOfFrames).good())
         {
-            qDebug() << "numberOfFrames: " << numberOfFrames;
+            cout << "numberOfFrames: " << numberOfFrames << endl;
         }
         else
-            qDebug() << "Error: cannot access numberOfFrames!";
+            cerr << "Error: cannot access numberOfFrames!" << endl;
 
         OFString samplesPerPixel;
         if (fileformat.getDataset()->findAndGetOFString(DCM_SamplesPerPixel, windowWidth).good())
         {
-            qDebug() << "samplesPerPixel: " << samplesPerPixel;
+            cout << "samplesPerPixel: " << samplesPerPixel << endl;
         }
         else
-            qDebug() << "Error: cannot access samplesPerPixel!";
+            cerr << "Error: cannot access samplesPerPixel!" << endl;
 
         OFString samplesPerPixelUsed;
         if (fileformat.getDataset()->findAndGetOFString(DCM_SamplesPerPixelUsed, windowWidth).good())
         {
-            qDebug() << "samplesPerPixelUsed: " << samplesPerPixelUsed;
+            cout << "samplesPerPixelUsed: " << samplesPerPixelUsed << endl;
         }
         else
-            qDebug() << "Error: cannot access samplesPerPixelUsed!";
+            cerr << "Error: cannot access samplesPerPixelUsed!" << endl;
 
         OFString photometricInterpretation;
         if (fileformat.getDataset()->findAndGetOFString(DCM_PhotometricInterpretation, windowWidth).good())
         {
-            qDebug() << "photometricInterpretation: " << photometricInterpretation;
+            cout << "photometricInterpretation: " << photometricInterpretation << endl;
         }
         else
-            qDebug() << "Error: cannot access photometricInterpretation!";
+            cerr << "Error: cannot access photometricInterpretation!" << endl;
     }
     else
-        qDebug() << "Error: cannot read DICOM file (" << status.text() << ")";
+        cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
 
-    qDebug() << "************************End************************";
+    cout << "************************End************************" << endl;
 
 //    system("pause");
 
