@@ -4,7 +4,10 @@
 #include <QTextStream>
 #include <stdio.h>
 #include <QDebug>
+#include <QDir>
 
+QTextStream cout(stdout, QIODevice::WriteOnly);
+QTextStream cerr(stderr, QIODevice::WriteOnly);
 
 //overload operator<<, otherwise Qt would not recognize OFString.
 QDebug operator<<(QDebug dbg, const OFString &ofString)
@@ -20,18 +23,10 @@ QTextStream& operator<<(QTextStream &outstream, OFString &ofString)
     return outstream;
 }
 
-int main(int argc, char *argv[])
+void outDcmInfo(const char *filePath)
 {
-    QCoreApplication a(argc, argv);  
-
-//    QTextStream cin(stdin, QIODevice::ReadOnly);
-    QTextStream cout(stdout, QIODevice::WriteOnly);
-    QTextStream cerr(stderr, QIODevice::WriteOnly);
-
-    cout << "************************Begin************************" << endl;
-
     DcmFileFormat fileformat;
-    OFCondition status = fileformat.loadFile("test.dcm");
+    OFCondition status = fileformat.loadFile(filePath);
     if (status.good())
     {
         OFString patientsName;
@@ -141,6 +136,35 @@ int main(int argc, char *argv[])
     }
     else
         cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
+}
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication a(argc, argv);  
+
+//    QTextStream cin(stdin, QIODevice::ReadOnly);
+//    QTextStream cout(stdout, QIODevice::WriteOnly);
+//    QTextStream cerr(stderr, QIODevice::WriteOnly);
+
+    cout << "************************Begin************************" << endl;
+
+    QString strDir("D:/programs/dcmfiles/");
+    QDir *dir = new QDir(strDir);
+    QStringList filter;
+    filter << "*.dcm";
+    dir->setNameFilters(filter);
+    QList<QFileInfo> *fileInfo=new QList<QFileInfo>(dir->entryInfoList(filter));
+    int count = fileInfo->count();
+
+    QString strFileName;
+    for(int i = 0; i < count; i++)
+    {
+        strFileName = fileInfo->at(i).filePath();
+        std::string str = strFileName.toStdString();
+        cout << str.c_str() << endl;
+        outDcmInfo(str.c_str());
+        cout << endl;
+    }
 
     cout << "************************End************************" << endl;
 
